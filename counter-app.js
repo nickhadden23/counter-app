@@ -20,6 +20,9 @@ export class CounterApp extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
+    this.min = 0;
+    this.max = 100
+    this.count = 0;
     this.title = "";
     this.t = this.t || {};
     this.t = {
@@ -40,6 +43,9 @@ export class CounterApp extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
+      count: { type: Number },
+      min: { type: Number },
+      max: { type: Number },
     };
   }
 
@@ -57,19 +63,50 @@ export class CounterApp extends DDDSuper(I18NMixin(LitElement)) {
         margin: var(--ddd-spacing-2);
         padding: var(--ddd-spacing-4);
       }
-      h3 span {
-        font-size: var(--counter-app-label-font-size, var(--ddd-font-size-s));
+     .counter {
+        font-size: var(--counter-app-label-font-size, var(--ddd-font-size-xxl));
+        color: ${this.count === 18 ? 'pink' : this.count === 21 ? 'purple' : 'inherit'};
+      }
+      .buttons {
+        display: flex;
+        gap: var(--ddd-spacing-2);
+      }
+        button {
+        padding: var(--ddd-spacing-2) var(--ddd-spacing-4);
+        font-size: var(--ddd-font-size-m);
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
     `];
-  }
+  } 
 
   // Lit render the HTML
   render() {
-    return html`
-<div class="wrapper">
-  <h3><span>${this.t.title}:</span> ${this.title}</h3>
-  <slot></slot>
-</div>`;
+    return html`  
+  <div class="wrapper">
+  <div class="counter>${this.count}</div>
+  <div class="buttons">
+  <button@click>=${this.decrease}>-1</button>
+  <button@click>=${this.increase}>+1</button>
+  </div>
+</div>`
+;
+  }
+  increase() {
+    if (this.count < this.max) {
+    this.count++;
+    }
+  }
+  decrease() {
+    if (this.count > this.min) {
+    this.count--;
+    }
+  }
+  reset() {
+    this.count = 0;
   }
 
   /**
@@ -78,7 +115,25 @@ export class CounterApp extends DDDSuper(I18NMixin(LitElement)) {
   static get haxProperties() {
     return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
       .href;
+}
+
+updated(changedProperties) {
+  if (super.updated) {
+    super.updated(changedProperties);
   }
+  if (changedProperties.has('counter') && this.count === 21) {
+    this.makeItRain();
+  }
+}
+
+makeItRain() {
+  import("@haxtheweb/multiple-choice/lib/confetti-container.js").then((module) => {
+    setTimeout(() => {
+      this.shadowRoot.querySelector("#confetti").setAttribute("popped", "");
+    }, 0);
+  });
+}
+
 }
 
 globalThis.customElements.define(CounterApp.tag, CounterApp);
