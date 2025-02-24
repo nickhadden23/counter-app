@@ -28,6 +28,9 @@
       background-color: var(--ddd-accent-2);
       color: var(--ddd-primary-17);
     }
+    .counter, .buttons {
+      border: 1px solid black;
+    }
   </style>
   <title>counter-app</title>
 </head>
@@ -41,8 +44,12 @@
     <h2>Slot usage</h2>
     <counter-app data-accent="2" data-primary="17"><div>Sample slot content</div></counter-app>
     <h2>Property usage</h2>
-    <counter-app id="example" title="Sample property title"></counter-app>
+    <counter-app id="example" title="My Counter App"></counter-app>
   </div>
+  <script type="module" src="./counter-app.js"></script>
+
+  <confetti-container id="confetti"></confetti-container>
+
   <script type="module" src="./counter-app.js"></script>
 
   <!-- Take HAX, the Web and you further down the rabbit hole -->
